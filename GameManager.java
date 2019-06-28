@@ -8,7 +8,6 @@ public class GameManager {
     private int level;
     private Point cursor;
     private ConsoleController clear;
-    private boolean isGameOver;
 
 
     public GameManager() {
@@ -35,6 +34,8 @@ public class GameManager {
             if (stage.canPut(cursor.x, cursor.y)) {
                 stage.openCell(cursor.x, cursor.y);
             }
+        } else {
+            isGameOver = true;
         }
     }
 
@@ -53,7 +54,7 @@ public class GameManager {
             endFlag = true;
         }
 
-        return isGameOver = endFlag;
+        return endFlag;
     }
 
 
@@ -75,7 +76,7 @@ public class GameManager {
                     break;
 
                 case Stage.CELL_BOMB:
-                    System.out.print(" B ");
+                    System.out.print(isEnd()?" B ":" + ");
                     break;
 
                 case Stage.CELL_SEARCH_END:
@@ -110,11 +111,14 @@ public class GameManager {
         selectStage();
 
         clear.execute();
-        while (!isGameOver) {
+        while (!isEnd()) {
             draw();
             input();
             update();
         }
+
+        draw();
+        System.exit(0);
     }
 
 

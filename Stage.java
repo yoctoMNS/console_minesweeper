@@ -1,3 +1,6 @@
+import java.util.Random;
+
+
 public class Stage {
     public static final int CELL_NONE       = 0;
     public static final int CELL_BOMB       = 1;
@@ -11,6 +14,7 @@ public class Stage {
 
     private int[][] data;
     private int cntBomb;
+    private Random random;
 
 
     public Stage() {
@@ -26,6 +30,7 @@ public class Stage {
     private void init(int width, int height) {
         this.width = width;
         this.height = height;
+        random = new Random();
 
         initStageData();
     }
@@ -44,13 +49,10 @@ public class Stage {
 
 
     private void putBomb() {
-        java.util.Random rd = new java.util.Random();
-
         for (int y=0; y<height; ++y)
         for (int x=0; x<width; ++x) {
-            int result = rd.nextInt(100);
 
-            if (result < 20) {
+            if (random.nextInt(100) < 20) {
                 data[y][x] = CELL_BOMB;
                 ++cntBomb;
             }
@@ -61,7 +63,9 @@ public class Stage {
     public void openCell(int x, int y) {
         data[y][x] = CELL_OPEN;
 
-        openCell(x, y, true);
+        if (random.nextInt(100) < 30) {
+            openCell(x, y, true);
+        }
     }
 
 
@@ -75,9 +79,9 @@ public class Stage {
                     countAroundBomb(x+j, y+i) == 0) {
                     data[y][x] = CELL_SEARCH_END;
                     openCell(x+j, y+i, true);
-                } else {
-                    data[y][x] = CELL_SEARCH_END;
-                    openCell(x+j, y+i, false);
+                } else if (data[y+i][x+j] == CELL_NONE &&
+                           countAroundBomb(x+j, y+i) != 0) {
+                    data[y+i][x+j] = CELL_OPEN;
                 }
             }
         }
